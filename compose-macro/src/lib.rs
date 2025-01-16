@@ -1,10 +1,10 @@
 // Function composition:
 //    - Function composition is the process of combining two or more functions to produce a new function.
 //    - The result of each function is passed as an argument to the next function.
-// 
+//
 // The macro invocation should look like so:
 //    - compose!(h -> g -> f)(x) == f(g(h(x)))
-// 
+//
 // This module defines a procedural macro for function composition.
 
 use proc_macro::TokenStream;
@@ -13,7 +13,7 @@ use syn::{parse::Parse, Ident};
 // The `Composed` struct represents the parsed input for the `compose!` macro.
 // It contains the first function and a list of additional functions to compose.
 struct Composed {
-    function: Ident, // The first function in the composition chain.
+    function: Ident,    // The first function in the composition chain.
     others: Vec<Ident>, // A vector of additional functions to apply in sequence.
 }
 
@@ -25,7 +25,7 @@ impl Parse for Composed {
         let mut others = Vec::new();
 
         // Parse additional functions separated by the `->` token.
-        while let Ok(_) = input.parse::<syn::Token![->]>() {
+        while input.parse::<syn::Token![->]>().is_ok() {
             let other: Ident = input.parse()?;
             others.push(other);
         }
