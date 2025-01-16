@@ -40,6 +40,12 @@ impl quote::ToTokens for Composed {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         let func = &self.function;
 
+        if self.others.is_empty() {
+            // If there are no additional functions, output the first function directly.
+            func.to_tokens(tokens);
+            return;
+        }
+
         // Start with the first function applied to the input `x`.
         let mut composed = quote::quote! {
             #func(x)
@@ -63,9 +69,16 @@ pub fn compose(input: TokenStream) -> TokenStream {
     // Parse the input into a `Composed` struct.
     let composed = syn::parse_macro_input!(input as Composed);
 
-    // Generate a closure that takes an input `x` and applies the composed functions.
-    let out = quote::quote! {
-        |x| #composed
+    let out = if composed.others.is_empty() {
+        // If there are no additional functions, return the first function directly.
+        quote::quote! {
+            #composed
+        }
+    } else {
+        // Generate a closure that takes an input `x` and applies the composed functions.
+        quote::quote! {
+          |x| #composed
+        }
     };
 
     // Return the generated code as a `TokenStream`.
