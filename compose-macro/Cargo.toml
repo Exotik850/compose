@@ -2,6 +2,11 @@
 name = "compose-macro"
 version = "0.1.0"
 edition = "2021"
+description = "A macro for composing functions"
+license = "MIT"
+readme = "../README.md"
+authors = ["Exotik850"]
+keywords = ["compose", "macro", "function"]
 
 [lib]
 proc-macro = true
